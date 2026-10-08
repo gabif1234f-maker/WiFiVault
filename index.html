@@ -3,143 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WiFiVault - Registro Seguro</title>
-    <link rel="stylesheet" href="style.css">
-    <!-- Script Oficial de Supabase compatible con GitHub Pages -->
+    <title>WiFiVault - Formulario de Prueba</title>
+    <!-- Conector Oficial de Supabase -->
     <script src="https://jsdelivr.net"></script>
+    <style>
+        body { background-color: #0f172a; color: white; font-family: sans-serif; padding: 40px; text-align: center; }
+        .box { background-color: #1e293b; max-width: 450px; margin: 0 auto; padding: 30px; border-radius: 12px; border: 1px solid #334155; }
+        .input-group { display: flex; flex-direction: column; text-align: left; margin-bottom: 15px; }
+        label { font-size: 13px; color: #94a3b8; font-weight: bold; margin-bottom: 5px; }
+        input { padding: 12px; background: #0f172a; border: 1px solid #334155; color: white; border-radius: 6px; font-size: 14px; }
+        button { width: 100%; padding: 14px; background: #10b981; border: none; color: #0f172a; font-weight: bold; border-radius: 6px; cursor: pointer; margin-top: 10px; font-size: 15px; }
+        button:hover { background: #059669; color: white; }
+        a { color: #38bdf8; text-decoration: none; display: inline-block; margin-top: 20px; font-size: 14px; }
+    </style>
 </head>
 <body>
 
-    <div class="app-layout">
-        <div class="top-nav">
-            <div class="nav-brand">
-                <span class="brand-icon">⚡</span>
-                <h1>WiFi<strong>Vault</strong></h1>
-            </div>
-            <a href="registros.html" class="btn-nav">📋 Gestionar Base de Datos</a>
-        </div>
-
-        <div class="main-card">
-            <div class="card-header">
-                <h2>Registrar Nueva Conexión</h2>
-                <p>Ingresa las credenciales y la ubicación del cliente de forma centralizada en Supabase.</p>
+    <div class="box">
+        <h2>🚀 WiFiVault - Enviar Datos</h2>
+        <p style="color: #94a3b8; font-size: 13px; margin-bottom: 25px;">Formulario básico de testeo de conexión en la nube.</p>
+        
+        <form id="testForm">
+            <div class="input-group">
+                <label>Nombre del Cliente</label>
+                <input type="text" id="valCliente" placeholder="Ej. Farmacia Pampa" required>
             </div>
             
-            <form id="wifiForm" class="modern-form">
-                <div class="form-section">
-                    <h3 class="section-title">Datos del Cliente</h3>
-                    <div class="form-group">
-                        <label for="nombreCliente">Nombre Completo o Razón Social</label>
-                        <input type="text" id="nombreCliente" placeholder="Ej. Juan Carlos Pérez o Farmacia Pampa" required>
-                    </div>
+            <div class="input-group">
+                <label>Dirección y Barrio</label>
+                <input type="text" id="valDireccion" placeholder="Ej. Av. 25 de Mayo 450 (B° Centro)" required>
+            </div>
+            
+            <div class="input-group">
+                <label>Contraseña WiFi / Red (SSID)</label>
+                <input type="text" id="valPassword" placeholder="Ej. Red: WiFi_Casa - Clave: P@ssw0rd!" required>
+            </div>
+            
+            <button type="submit">Enviar a Base de Datos</button>
+        </form>
 
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label for="localidad">Localidad</label>
-                            <select id="localidad" required>
-                                <option value="Pampa del Infierno, Chaco" selected>Pampa del Infierno, Chaco</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="barrioSelect">Barrio</label>
-                            <select id="barrioSelect" required>
-                                <option value="" disabled selected>Selecciona un barrio...</option>
-                                <option value="Centro">Barrio Centro</option>
-                                <option value="Aviación">Barrio Aviación</option>
-                                <option value="San Cayetano">Barrio San Cayetano</option>
-                                <option value="Primavera">Barrio Primavera</option>
-                                <option value="NUEVO_BARRIO">➕ Agregar Nuevo Barrio...</option>
-                            </select>
-                            <input type="text" id="barrioManual" placeholder="Escribe el nombre del barrio..." style="display: none; margin-top: 8px;">
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="direccion">Dirección (Calle y Altura / Número de casa)</label>
-                        <input type="text" id="direccion" placeholder="Ej. Av. 25 de Mayo 450 o Calle Sarmiento S/N" required>
-                    </div>
-                </div>
-
-                <div class="form-section">
-                    <h3 class="section-title">Configuración de Conexión</h3>
-                    <div class="form-group">
-                        <label for="nombreRed">Nombre de la Red (SSID)</label>
-                        <input type="text" id="nombreRed" placeholder="Ej. WiFi_Casa_Perez" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="password">Contraseña de Red WiFi</label>
-                        <input type="text" id="password" class="password-field" placeholder="Ej. P@ssw0rd2026!" required>
-                    </div>
-                </div>
-
-                <button type="submit" class="btn-primary">Almacenar Credenciales en Servidor</button>
-            </form>
-        </div>
+        <a href="registros.html">📋 Ver Registros Guardados →</a>
     </div>
 
     <script>
-        // Tus datos reales integrados al 100% de tus capturas
-        const SUPABASE_URL = "https://supabase.co"; 
-        const SUPABASE_ANON_KEY = "sb_publishable_XXjNw0LJ7HroXlhobY3vTg_l3ofqWMa";
+        // Enlace directo a tu proyecto actual de las capturas
+        const URL_SUPABASE = "https://uwefwdfjfnoknkkobnzn.supabase.co";
+        const KEY_SUPABASE = "sb_publishable_XXjNw0LJ7HroXlhobY3vTg_l3ofqWMa";
+        const clienteSupabase = supabase.createClient(URL_SUPABASE, KEY_SUPABASE);
 
-        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        const selectBarrio = document.getElementById("barrioSelect");
-        const inputBarrioManual = document.getElementById("barrioManual");
-        async function incorporarBarriosNuevos() {
-            try {
-                const { data, error } = await supabaseClient.from('redes_wifi').select('barrio');
-                if (data) {
-                    let barriosExistentes = ["Centro", "Aviación", "San Cayetano", "Primavera", "NUEVO_BARRIO"];
-                    data.forEach(row => {
-                        if (row.barrio && !barriosExistentes.includes(row.barrio)) {
-                            barriosExistentes.push(row.barrio);
-                            var opt = document.createElement("option");
-                            opt.value = row.barrio;
-                            opt.textContent = "Barrio " + row.barrio;
-                            selectBarrio.insertBefore(opt, selectBarrio.lastChild);
-                        }
-                    });
-                }
-            } catch(e) { console.log(e); }
-        }
-
-        selectBarrio.addEventListener("change", function() {
-            if (this.value === "NUEVO_BARRIO") {
-                inputBarrioManual.style.display = "block";
-                inputBarrioManual.required = true;
-                inputBarrioManual.value = "";
-                inputBarrioManual.focus();
-            } else {
-                inputBarrioManual.style.display = "none";
-                inputBarrioManual.required = false;
-            }
-        });
-
-        document.getElementById("wifiForm").addEventListener("submit", async function(e) {
+        document.getElementById("testForm").addEventListener("submit", async function(e) {
             e.preventDefault();
             
-            var barrioFinal = selectBarrio.value === "NUEVO_BARRIO" ? inputBarrioManual.value.trim() : selectBarrio.value;
-            var direccionTxt = document.getElementById("direccion").value.trim();
-            var direccionCompleta = direccionTxt + " (B° " + barrioFinal + "), Pampa del Infierno";
-            
-            const { error } = await supabaseClient.from('redes_wifi').insert([
-                { 
-                    nombre: document.getElementById("nombreCliente").value.trim(), 
-                    ubicacion: direccionCompleta, 
-                    barrio: barrioFinal, 
-                    red: document.getElementById("nombreRed").value.trim(), 
-                    password: document.getElementById("password").value 
-                }
-            ]);
+            const txtNombre = document.getElementById("valCliente").value.trim();
+            const txtDireccion = document.getElementById("valDireccion").value.trim();
+            const txtPassword = document.getElementById("valPassword").value.trim();
 
-            if (error) {
-                alert("Error al guardar en Supabase. Revisa que hayas creado la tabla 'redes_wifi' en el SQL Editor.");
-            } else {
-                alert("¡Registro almacenado en Supabase Cloud con éxito!");
-                window.location.href = "registros.html";
+            try {
+                // Envío directo respetando las columnas creadas en tu SQL Editor
+                const { error } = await clienteSupabase.from('redes_wifi').insert([
+                    { 
+                        nombre: txtNombre, 
+                        ubicacion: txtDireccion, 
+                        barrio: "Manual", // Campo por defecto para evitar errores de restricción
+                        red: "WiFi",      // Campo por defecto para testeo básico
+                        password: txtPassword 
+                    }
+                ]);
+
+                if (error) {
+                    alert("Error en el servidor: " + error.message);
+                } else {
+                    alert("¡Éxito! Datos guardados en la nube.");
+                    document.getElementById("testForm").reset();
+                    window.location.href = "registros.html";
+                }
+            } catch (err) {
+                alert("Error de conexión externa.");
             }
         });
-
-        document.addEventListener("DOMContentLoaded", incorporarBarriosNuevos);
     </script>
+</body>
+</html>
