@@ -55,11 +55,12 @@
         import { initializeApp } from "https://gstatic.com";
         import { getFirestore, collection, getDocs, doc, updateDoc, deleteDoc } from "https://gstatic.com";
 
+        // Tus datos oficiales de Firebase integrados al 100% de tu captura
         const firebaseConfig = {
             apiKey: "AIzaSyCd5mbGW3sbeV2Cp3vjeVwiiD2QzvSymjo",
             authDomain: "://firebaseapp.com",
             projectId: "wi-fi-dcfd6",
-            storageBucket: "://appspot.com",
+            storageBucket: "wi-fi-dcfd6.firebasestorage.app",
             messagingSenderId: "903524317999",
             appId: "1:903524317999:web:11867a826e078b5a077fda",
             measurementId: "G-8417484NY2"
@@ -121,6 +122,7 @@
                     tablaBody.appendChild(fila);
                 });
 
+                // ASIGNACIÓN DE ACCIONES IN-MODULE
                 document.querySelectorAll('.btn-copy').forEach(btn => {
                     btn.addEventListener('click', function() {
                         var pass = this.getAttribute('data-pass');
