@@ -141,8 +141,7 @@
                 inputBarrioManual.required = false;
             }
         });
-
-        // 2. GUARDAR DATOS EN FIRESTORE CLOUD
+        // 2. GUARDAR DATOS EN FIRESTORE CLOUD (SIMPLIFICADO E INBLOQUEABLE)
         document.getElementById("wifiForm").addEventListener("submit", async function(e) {
             e.preventDefault();
             
@@ -150,7 +149,7 @@
             var direccionTxt = document.getElementById("direccion").value.trim();
             var localidadTxt = document.getElementById("localidad").value;
             
-            var direccionCompleta = direccionTxt + " (B° " + barrioFinal + "), " + localidadTxt;
+            var direccionCompleta = direccionTxt + " (B° " + barrioFinal + "), " + localidadFinal;
             
             try {
                 await addDoc(collection(db, "redes_wifi"), {
@@ -158,8 +157,8 @@
                     ubicacion: direccionCompleta,
                     barrio: barrioFinal,
                     red: document.getElementById("nombreRed").value.trim(),
-                    password: document.getElementById("password").value,
-                    timestamp: Date.now()
+                    password: document.getElementById("password").value
+                    // Quitamos la línea de timestamp para evitar el bloqueo de índices de Firebase
                 });
                 
                 alert("¡Registro guardado exitosamente en la nube!");
@@ -167,9 +166,10 @@
                 window.location.href = "registros.html";
             } catch (error) {
                 console.error("Error al guardar: ", error);
-                alert("Error al conectar con la base de datos. Verifica la pestaña Rules.");
+                alert("Error al conectar con la base de datos.");
             }
         });
+
 
         document.addEventListener("DOMContentLoaded", incorporarBarriosNuevos);
     </script>
