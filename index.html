@@ -49,7 +49,12 @@
                         <div class="form-group">
                             <label for="barrioSelect">Barrio</label>
                             <select id="barrioSelect" required>
-                                <option value="" disabled selected>Cargando barrios...</option>
+                                <option value="" disabled selected>Selecciona un barrio...</option>
+                                <option value="Centro">Barrio Centro</option>
+                                <option value="Aviación">Barrio Aviación</option>
+                                <option value="San Cayetano">Barrio San Cayetano</option>
+                                <option value="Primavera">Barrio Primavera</option>
+                                <option value="NUEVO_BARRIO">➕ Agregar Nuevo Barrio...</option>
                             </select>
                             <!-- Cuadro de texto para agregar barrio a mano -->
                             <input type="text" id="barrioManual" placeholder="Escribe el nombre del barrio..." style="display: none; margin-top: 8px;">
@@ -101,41 +106,30 @@
 
         const selectBarrio = document.getElementById("barrioSelect");
         const inputBarrioManual = document.getElementById("barrioManual");
-        // 1. CARGAR BARRIOS DISPONIBLES DESDE FIREBASE DE FORMA DINÁMICA
-        async function cargarBarriosEnMenu() {
-            selectBarrio.innerHTML = '<option value="" disabled selected>Selecciona un barrio...</option>';
-            
-            // Barrios base por defecto
-            let barriosUnicos = ["Centro", "Aviación", "San Cayetano", "Primavera"];
-
+        // 1. CARGAR BARRIOS ADICIONALES GUARDADOS ANTERIORMENTE (SOPORTE DE RESPALDO)
+        async function incorporarBarriosNuevos() {
             try {
                 const querySnapshot = await getDocs(collection(db, "redes_wifi"));
+                let barriosExistentes = ["Centro", "Aviación", "San Cayetano", "Primavera", "NUEVO_BARRIO"];
+                
                 querySnapshot.forEach((docSnap) => {
                     var data = docSnap.data();
-                    if (data.barrio && !barriosUnicos.includes(data.barrio)) {
-                        barriosUnicos.push(data.barrio);
+                    if (data.barrio && !barriosExistentes.includes(data.barrio)) {
+                        barriosExistentes.push(data.barrio);
+                        
+                        // Insertar el nuevo barrio dinámico antes de la opción manual de agregar
+                        var opt = document.createElement("option");
+                        opt.value = data.barrio;
+                        opt.textContent = "Barrio " + data.barrio;
+                        selectBarrio.insertBefore(opt, document.getElementById("barrioSelect").lastChild);
                     }
                 });
             } catch (err) {
-                console.error("Error al leer barrios: ", err);
+                console.log("Modo inicial o reglas restringidas: se usan barrios base.");
             }
-
-            // Renderizar las opciones en el menú desplegable
-            barriosUnicos.forEach(function(b) {
-                var opt = document.createElement("option");
-                opt.value = b;
-                opt.textContent = "Barrio " + b;
-                selectBarrio.appendChild(opt);
-            });
-
-            // Agregamos la opción especial para escribir a mano
-            var optManual = document.createElement("option");
-            optManual.value = "NUEVO_BARRIO";
-            optManual.textContent = "➕ Agregar Nuevo Barrio...";
-            selectBarrio.appendChild(optManual);
         }
 
-        // Controlar si se muestra el cuadro para escribir a mano
+        // Controlar visualización de la caja de texto manual
         selectBarrio.addEventListener("change", function() {
             if (this.value === "NUEVO_BARRIO") {
                 inputBarrioManual.style.display = "block";
@@ -148,7 +142,7 @@
             }
         });
 
-        // 2. GUARDAR DATOS EN LA NUBE UNIFICANDO DIRECCIÓN Y BARRIO
+        // 2. GUARDAR DATOS EN FIRESTORE CLOUD
         document.getElementById("wifiForm").addEventListener("submit", async function(e) {
             e.preventDefault();
             
@@ -156,29 +150,28 @@
             var direccionTxt = document.getElementById("direccion").value.trim();
             var localidadTxt = document.getElementById("localidad").value;
             
-            // Creamos un texto único y estructurado de dirección para mostrar en la tabla
             var direccionCompleta = direccionTxt + " (B° " + barrioFinal + "), " + localidadTxt;
             
             try {
                 await addDoc(collection(db, "redes_wifi"), {
                     nombre: document.getElementById("nombreCliente").value.trim(),
                     ubicacion: direccionCompleta,
-                    barrio: barrioFinal, // Guardamos el barrio por separado para alimentarlo en el menú de arriba
+                    barrio: barrioFinal,
                     red: document.getElementById("nombreRed").value.trim(),
                     password: document.getElementById("password").value,
                     timestamp: Date.now()
                 });
                 
-                alert("¡Registro guardado y barrio indexado con éxito!");
+                alert("¡Registro guardado exitosamente en la nube!");
                 document.getElementById("wifiForm").reset();
                 window.location.href = "registros.html";
             } catch (error) {
                 console.error("Error al guardar: ", error);
-                alert("Error al guardar en el servidor cloud.");
+                alert("Error al conectar con la base de datos. Verifica la pestaña Rules.");
             }
         });
 
-        document.addEventListener("DOMContentLoaded", cargarBarriosEnMenu);
+        document.addEventListener("DOMContentLoaded", incorporarBarriosNuevos);
     </script>
 </body>
 </html>

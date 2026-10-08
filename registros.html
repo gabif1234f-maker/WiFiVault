@@ -86,8 +86,10 @@
                 tablaBody.innerHTML = "";
 
                 var listaFiltrada = listaClientes.filter(function(cliente) {
-                    return cliente.nombre.toLowerCase().includes(filtro.toLowerCase()) || 
-                           cliente.ubicacion.toLowerCase().includes(filtro.toLowerCase());
+                    var n = cliente.nombre ? cliente.nombre.toLowerCase() : "";
+                    var u = cliente.ubicacion ? cliente.ubicacion.toLowerCase() : "";
+                    var f = filtro.toLowerCase();
+                    return n.includes(f) || u.includes(f);
                 });
 
                 if (listaFiltrada.length === 0) {
@@ -100,13 +102,13 @@
                     fila.id = "fila-" + cliente.id;
 
                     fila.innerHTML = `
-                        <td><div class="client-name" id="label-nombre-${cliente.id}">${cliente.nombre}</div></td>
-                        <td><div class="address-text" id="label-ubicacion-${cliente.id}">${cliente.ubicacion}</div></td>
-                        <td><span class="badge-ssid" id="label-red-${cliente.id}">${cliente.red}</span></td>
+                        <td><div class="client-name" id="label-nombre-${cliente.id}">${cliente.nombre || ''}</div></td>
+                        <td><div class="address-text" id="label-ubicacion-${cliente.id}">${cliente.ubicacion || ''}</div></td>
+                        <td><span class="badge-ssid" id="label-red-${cliente.id}">${cliente.red || ''}</span></td>
                         <td>
                             <div class="password-container-row">
-                                <span class="crypto-password" id="label-password-${cliente.id}">${cliente.password}</span>
-                                <button class="btn-copy" data-pass="${cliente.password}">📋</button>
+                                <span class="crypto-password" id="label-password-${cliente.id}">${cliente.password || ''}</span>
+                                <button class="btn-copy" data-pass="${cliente.password || ''}">📋</button>
                             </div>
                         </td>
                         <td style="text-align: center;">
@@ -119,6 +121,7 @@
                     tablaBody.appendChild(fila);
                 });
 
+                // ASIGNACIÓN DE CLICKS DENTRO DEL ENTORNO SEGURO
                 document.querySelectorAll('.btn-copy').forEach(btn => {
                     btn.addEventListener('click', function() {
                         var pass = this.getAttribute('data-pass');
@@ -145,8 +148,8 @@
                 });
 
             } catch (error) {
-                console.error("Error: ", error);
-                tablaBody.innerHTML = '<tr><td colspan="5" class="empty-msg">Error de comunicación con el servidor.</td></tr>';
+                console.error("Error al conectar: ", error);
+                tablaBody.innerHTML = '<tr><td colspan="5" class="empty-msg">Error de comunicación. Asegúrate de poner las Reglas en "if true;".</td></tr>';
             }
         }
 
