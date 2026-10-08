@@ -101,7 +101,7 @@
 
         const firebaseConfig = {
             apiKey: "AIzaSyCd5mbGW3sbeV2Cp3vjeVwiiD2QzvSymjo",
-            authDomain: "wi-fi-dcfd6.firebaseapp.com",
+            authDomain: "://firebaseapp.com",
             projectId: "wi-fi-dcfd6",
             storageBucket: "://appspot.com",
             messagingSenderId: "903524317999",
@@ -123,6 +123,7 @@
         var selectCalle = document.getElementById('calle');
         var inputCalleManual = document.getElementById('calleManual');
 
+        // Escucha nativa dentro del módulo (Evita bloqueos del navegador)
         selectBarrio.addEventListener('change', function() {
             var barrioSeleccionado = this.value;
             selectCalle.innerHTML = '<option value="" disabled selected>Selecciona una calle...</option>';
@@ -173,7 +174,7 @@
                 window.location.href = "registros.html";
             } catch (error) {
                 console.error("Error al guardar: ", error);
-                alert("Error al intentar conectar con la base de datos.");
+                alert("Error al guardar en la nube.");
             }
         });
     </script>

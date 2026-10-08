@@ -55,10 +55,9 @@
         import { initializeApp } from "https://gstatic.com";
         import { getFirestore, collection, getDocs, doc, updateDoc, deleteDoc } from "https://gstatic.com";
 
-        // Tus credenciales reales integradas
         const firebaseConfig = {
             apiKey: "AIzaSyCd5mbGW3sbeV2Cp3vjeVwiiD2QzvSymjo",
-            authDomain: "wi-fi-dcfd6.firebaseapp.com",
+            authDomain: "://firebaseapp.com",
             projectId: "wi-fi-dcfd6",
             storageBucket: "://appspot.com",
             messagingSenderId: "903524317999",
@@ -120,7 +119,6 @@
                     tablaBody.appendChild(fila);
                 });
 
-                // VINCULACIÓN INTERNA DE BOTONES EXCLUSIVA PARA MÓDULOS JS
                 document.querySelectorAll('.btn-copy').forEach(btn => {
                     btn.addEventListener('click', function() {
                         var pass = this.getAttribute('data-pass');
