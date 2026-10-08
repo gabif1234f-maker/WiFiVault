@@ -47,31 +47,18 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="barrio">Barrio</label>
-                            <select id="barrio" required>
-                                <option value="" disabled selected>Selecciona...</option>
-                                <option value="Centro">Barrio Centro</option>
-                                <option value="Aviación">Barrio Aviación</option>
-                                <option value="San Cayetano">Barrio San Cayetano</option>
-                                <option value="Primavera">Barrio Primavera</option>
-                                <option value="Otro">Otro / Zona Rural</option>
+                            <label for="barrioSelect">Barrio</label>
+                            <select id="barrioSelect" required>
+                                <option value="" disabled selected>Cargando barrios...</option>
                             </select>
+                            <!-- Cuadro de texto para agregar barrio a mano -->
+                            <input type="text" id="barrioManual" placeholder="Escribe el nombre del barrio..." style="display: none; margin-top: 8px;">
                         </div>
                     </div>
 
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label for="calle">Calle</label>
-                            <select id="calle" required disabled>
-                                <option value="" disabled selected>Elige un barrio primero...</option>
-                            </select>
-                            <input type="text" id="calleManual" placeholder="Escribe la calle manualmente..." style="display: none; margin-top: 8px;">
-                        </div>
-
-                        <div class="form-group" style="max-width: 150px;">
-                            <label for="altura">Altura / N°</label>
-                            <input type="text" id="altura" placeholder="Ej. 450 o S/N" required>
-                        </div>
+                    <div class="form-group">
+                        <label for="direccion">Dirección (Calle y Altura / Número de casa)</label>
+                        <input type="text" id="direccion" placeholder="Ej. Av. 25 de Mayo 450 o Calle Sarmiento S/N" required>
                     </div>
                 </div>
 
@@ -97,7 +84,7 @@
 
     <script type="module">
         import { initializeApp } from "https://gstatic.com";
-        import { getFirestore, collection, addDoc } from "https://gstatic.com";
+        import { getFirestore, collection, addDoc, getDocs } from "https://gstatic.com";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCd5mbGW3sbeV2Cp3vjeVwiiD2QzvSymjo",
@@ -112,70 +99,86 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        var mapaCalles = {
-            "Centro": ["Av. 25 de Mayo", "Av. San Martín", "Calle Rivadavia", "Calle Belgrano", "Calle Sarmiento"],
-            "Aviación": ["Calle Jorge Newbery", "Calle Almandos Almonacid", "Calle Fuerza Aérea", "Calle Los Inmigrantes"],
-            "San Cayetano": ["Calle San Cayetano", "Calle Padre Grote", "Calle San Martín Prolongación"],
-            "Primavera": ["Calle 21 de Septiembre", "Calle Las Flores", "Calle El Ceibo", "Calle Los Lapachos"]
-        };
-
-        var campoBarrio = document.getElementById('barrio');
-        var campoCalle = document.getElementById('calle');
-        var campoManual = document.getElementById('calleManual');
-
-        campoBarrio.addEventListener('change', function() {
-            var elegido = this.value;
-            campoCalle.innerHTML = '<option value="" disabled selected>Selecciona una calle...</option>';
+        const selectBarrio = document.getElementById("barrioSelect");
+        const inputBarrioManual = document.getElementById("barrioManual");
+        // 1. CARGAR BARRIOS DISPONIBLES DESDE FIREBASE DE FORMA DINÁMICA
+        async function cargarBarriosEnMenu() {
+            selectBarrio.innerHTML = '<option value="" disabled selected>Selecciona un barrio...</option>';
             
-            if (elegido === "Otro" || !mapaCalles[elegido]) {
-                campoCalle.style.display = "none";
-                campoCalle.required = false;
-                campoManual.style.display = "block";
-                campoManual.required = true;
-                campoManual.value = "";
-            } else {
-                campoCalle.style.display = "block";
-                campoCalle.required = true;
-                campoCalle.disabled = false;
-                campoManual.style.display = "none";
-                campoManual.required = false;
+            // Barrios base por defecto
+            let barriosUnicos = ["Centro", "Aviación", "San Cayetano", "Primavera"];
 
-                var lista = mapaCalles[elegido];
-                lista.forEach(function(calle) {
-                    var opcion = document.createElement('option');
-                    opcion.value = calle;
-                    opcion.textContent = calle;
-                    campoCalle.appendChild(opcion);
+            try {
+                const querySnapshot = await getDocs(collection(db, "redes_wifi"));
+                querySnapshot.forEach((docSnap) => {
+                    var data = docSnap.data();
+                    if (data.barrio && !barriosUnicos.includes(data.barrio)) {
+                        barriosUnicos.push(data.barrio);
+                    }
                 });
+            } catch (err) {
+                console.error("Error al leer barrios: ", err);
+            }
+
+            // Renderizar las opciones en el menú desplegable
+            barriosUnicos.forEach(function(b) {
+                var opt = document.createElement("option");
+                opt.value = b;
+                opt.textContent = "Barrio " + b;
+                selectBarrio.appendChild(opt);
+            });
+
+            // Agregamos la opción especial para escribir a mano
+            var optManual = document.createElement("option");
+            optManual.value = "NUEVO_BARRIO";
+            optManual.textContent = "➕ Agregar Nuevo Barrio...";
+            selectBarrio.appendChild(optManual);
+        }
+
+        // Controlar si se muestra el cuadro para escribir a mano
+        selectBarrio.addEventListener("change", function() {
+            if (this.value === "NUEVO_BARRIO") {
+                inputBarrioManual.style.display = "block";
+                inputBarrioManual.required = true;
+                inputBarrioManual.value = "";
+                inputBarrioManual.focus();
+            } else {
+                inputBarrioManual.style.display = "none";
+                inputBarrioManual.required = false;
             }
         });
 
-        document.getElementById('wifiForm').addEventListener('submit', async function(e) {
+        // 2. GUARDAR DATOS EN LA NUBE UNIFICANDO DIRECCIÓN Y BARRIO
+        document.getElementById("wifiForm").addEventListener("submit", async function(e) {
             e.preventDefault();
             
-            var calleTxt = campoCalle.style.display === "none" ? campoManual.value.trim() : campoCalle.value;
-            var barrioTxt = campoBarrio.value;
-            var alturaTxt = document.getElementById('altura').value.trim();
-            var locTxt = document.getElementById('localidad').value;
-            var dirUnificada = calleTxt + " " + alturaTxt + " (B° " + barrioTxt + "), " + locTxt;
+            var barrioFinal = selectBarrio.value === "NUEVO_BARRIO" ? inputBarrioManual.value.trim() : selectBarrio.value;
+            var direccionTxt = document.getElementById("direccion").value.trim();
+            var localidadTxt = document.getElementById("localidad").value;
+            
+            // Creamos un texto único y estructurado de dirección para mostrar en la tabla
+            var direccionCompleta = direccionTxt + " (B° " + barrioFinal + "), " + localidadTxt;
             
             try {
                 await addDoc(collection(db, "redes_wifi"), {
-                    nombre: document.getElementById('nombreCliente').value.trim(),
-                    ubicacion: dirUnificada,
-                    red: document.getElementById('nombreRed').value.trim(),
-                    password: document.getElementById('password').value,
+                    nombre: document.getElementById("nombreCliente").value.trim(),
+                    ubicacion: direccionCompleta,
+                    barrio: barrioFinal, // Guardamos el barrio por separado para alimentarlo en el menú de arriba
+                    red: document.getElementById("nombreRed").value.trim(),
+                    password: document.getElementById("password").value,
                     timestamp: Date.now()
                 });
                 
-                alert("¡Registro guardado en la nube con éxito!");
-                document.getElementById('wifiForm').reset();
+                alert("¡Registro guardado y barrio indexado con éxito!");
+                document.getElementById("wifiForm").reset();
                 window.location.href = "registros.html";
             } catch (error) {
                 console.error("Error al guardar: ", error);
-                alert("Error al guardar en la nube.");
+                alert("Error al guardar en el servidor cloud.");
             }
         });
+
+        document.addEventListener("DOMContentLoaded", cargarBarriosEnMenu);
     </script>
 </body>
 </html>

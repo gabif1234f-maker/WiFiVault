@@ -25,7 +25,7 @@
             <div class="controls-toolbar">
                 <div class="search-wrapper">
                     <span class="search-icon">🔍</span>
-                    <input type="text" id="inputBuscar" class="search-input" placeholder="Buscar cliente, calle o barrio...">
+                    <input type="text" id="inputBuscar" class="search-input" placeholder="Buscar cliente, dirección o barrio...">
                 </div>
                 <button id="btnExportar" class="btn-excel">
                     <span>📥</span> Exportar Planilla (.CSV)
@@ -55,7 +55,6 @@
         import { initializeApp } from "https://gstatic.com";
         import { getFirestore, collection, getDocs, doc, updateDoc, deleteDoc } from "https://gstatic.com";
 
-        // Tus credenciales reales integradas
         const firebaseConfig = {
             apiKey: "AIzaSyCd5mbGW3sbeV2Cp3vjeVwiiD2QzvSymjo",
             authDomain: "://firebaseapp.com",
@@ -120,7 +119,6 @@
                     tablaBody.appendChild(fila);
                 });
 
-                // VINCULACIÓN INTERNA DE BOTONES SEGUROS PARA EL MÓDULO
                 document.querySelectorAll('.btn-copy').forEach(btn => {
                     btn.addEventListener('click', function() {
                         var pass = this.getAttribute('data-pass');
@@ -148,7 +146,7 @@
 
             } catch (error) {
                 console.error("Error: ", error);
-                tablaBody.innerHTML = '<tr><td colspan="5" class="empty-msg">Error de comunicación con la base de datos.</td></tr>';
+                tablaBody.innerHTML = '<tr><td colspan="5" class="empty-msg">Error de comunicación con el servidor.</td></tr>';
             }
         }
 
