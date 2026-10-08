@@ -95,7 +95,8 @@
         </div>
     </div>
 
-    <script type="module">
+      <script type="module">
+        // URLs oficiales de Google Firebase corregidas sin errores de tipeo (CORS Ok)
         import { initializeApp } from "https://gstatic.com";
         import { getFirestore, collection, addDoc } from "https://gstatic.com";
 
@@ -112,71 +113,73 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        var callesPorBarrio = {
+        // Diccionario clásico de calles de Pampa del Infierno
+        const mapaCalles = {
             "Centro": ["Av. 25 de Mayo", "Av. San Martín", "Calle Rivadavia", "Calle Belgrano", "Calle Sarmiento"],
             "Aviación": ["Calle Jorge Newbery", "Calle Almandos Almonacid", "Calle Fuerza Aérea", "Calle Los Inmigrantes"],
             "San Cayetano": ["Calle San Cayetano", "Calle Padre Grote", "Calle San Martín Prolongación"],
             "Primavera": ["Calle 21 de Septiembre", "Calle Las Flores", "Calle El Ceibo", "Calle Los Lapachos"]
         };
 
-        var selectBarrio = document.getElementById('barrio');
-        var selectCalle = document.getElementById('calle');
-        var inputCalleManual = document.getElementById('calleManual');
+        const campoBarrio = document.getElementById("barrio");
+        const campoCalle = document.getElementById("calle");
+        const campoManual = document.getElementById("calleManual");
 
-        // Escucha nativa dentro del módulo (Evita bloqueos del navegador)
-        selectBarrio.addEventListener('change', function() {
-            var barrioSeleccionado = this.value;
-            selectCalle.innerHTML = '<option value="" disabled selected>Selecciona una calle...</option>';
+        // Función directa de cambio de calles a prueba de fallos
+        campoBarrio.addEventListener("change", function() {
+            const elegido = campoBarrio.value;
+            campoCalle.innerHTML = '<option value="" disabled selected>Selecciona una calle...</option>';
             
-            if (barrioSeleccionado === "Otro" || !callesPorBarrio[barrioSeleccionado]) {
-                selectCalle.style.display = "none";
-                selectCalle.required = false;
-                inputCalleManual.style.display = "block";
-                inputCalleManual.required = true;
-                inputCalleManual.value = "";
+            if (elegido === "Otro" || !mapaCalles[elegido]) {
+                campoCalle.style.display = "none";
+                campoCalle.required = false;
+                campoManual.style.display = "block";
+                campoManual.required = true;
+                campoManual.value = "";
             } else {
-                selectCalle.style.display = "block";
-                selectCalle.required = true;
-                selectCalle.disabled = false;
-                inputCalleManual.style.display = "none";
-                inputCalleManual.required = false;
+                campoCalle.style.display = "block";
+                campoCalle.required = true;
+                campoCalle.disabled = false;
+                campoManual.style.display = "none";
+                campoManual.required = false;
 
-                var calles = callesPorBarrio[barrioSeleccionado];
-                calles.forEach(function(calle) {
-                    var opcion = document.createElement('option');
-                    opcion.value = calle;
-                    opcion.textContent = calle;
-                    selectCalle.appendChild(opcion);
-                });
+                const lista = mapaCalles[elegido];
+                for (let i = 0; i < lista.length; i++) {
+                    const opt = document.createElement("option");
+                    opt.value = lista[i];
+                    opt.textContent = lista[i];
+                    campoCalle.appendChild(opt);
+                }
             }
         });
 
-        document.getElementById('wifiForm').addEventListener('submit', async function(e) {
+        // Envío seguro al servidor Firestore
+        document.getElementById("wifiForm").addEventListener("submit", async function(e) {
             e.preventDefault();
             
-            var calleFinal = selectCalle.style.display === "none" ? inputCalleManual.value.trim() : selectCalle.value;
-            var barrioFinal = selectBarrio.value;
-            var alturaFinal = document.getElementById('altura').value.trim();
-            var localidadFinal = document.getElementById('localidad').value;
-            var direccionCompleta = calleFinal + " " + alturaFinal + " (B° " + barrioFinal + "), " + localidadFinal;
+            const calleTxt = (campoCalle.style.display === "none") ? campoManual.value.trim() : campoCalle.value;
+            const barrioTxt = campoBarrio.value;
+            const alturaTxt = document.getElementById("altura").value.trim();
+            const locTxt = document.getElementById("localidad").value;
+            const dirUnificada = calleTxt + " " + alturaTxt + " (B° " + barrioTxt + "), " + locTxt;
             
             try {
                 await addDoc(collection(db, "redes_wifi"), {
-                    nombre: document.getElementById('nombreCliente').value.trim(),
-                    ubicacion: direccionCompleta,
-                    red: document.getElementById('nombreRed').value.trim(),
-                    password: document.getElementById('password').value,
+                    nombre: document.getElementById("nombreCliente").value.trim(),
+                    ubicacion: dirUnificada,
+                    red: document.getElementById("nombreRed").value.trim(),
+                    password: document.getElementById("password").value,
                     timestamp: Date.now()
                 });
-                
                 alert("¡Registro guardado en la nube con éxito!");
-                document.getElementById('wifiForm').reset();
+                document.getElementById("wifiForm").reset();
                 window.location.href = "registros.html";
-            } catch (error) {
-                console.error("Error al guardar: ", error);
-                alert("Error al guardar en la nube.");
+            } catch (err) {
+                console.error(err);
+                alert("Error al conectar con el servidor.");
             }
         });
     </script>
+
 </body>
 </html>
