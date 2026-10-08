@@ -5,34 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WiFiVault - Registro Seguro</title>
     <link rel="stylesheet" href="style.css">
+    <!-- Script Oficial de Supabase compatible con GitHub Pages -->
+    <script src="https://jsdelivr.net"></script>
 </head>
 <body>
 
     <div class="app-layout">
-        <!-- Barra de navegación superior -->
         <div class="top-nav">
             <div class="nav-brand">
                 <span class="brand-icon">⚡</span>
                 <h1>WiFi<strong>Vault</strong></h1>
             </div>
-            <a href="registros.html" class="btn-nav">
-                <span>📋</span> Gestionar Base de Datos
-            </a>
+            <a href="registros.html" class="btn-nav">📋 Gestionar Base de Datos</a>
         </div>
 
-        <!-- Tarjeta del Formulario -->
         <div class="main-card">
             <div class="card-header">
                 <h2>Registrar Nueva Conexión</h2>
-                <p>Ingresa las credenciales y la ubicación del cliente de forma centralizada.</p>
+                <p>Ingresa las credenciales y la ubicación del cliente de forma centralizada en Supabase.</p>
             </div>
             
             <form id="wifiForm" class="modern-form">
-                
-                <!-- SECCIÓN: DATOS DEL CLIENTE -->
                 <div class="form-section">
                     <h3 class="section-title">Datos del Cliente</h3>
-                    
                     <div class="form-group">
                         <label for="nombreCliente">Nombre Completo o Razón Social</label>
                         <input type="text" id="nombreCliente" placeholder="Ej. Juan Carlos Pérez o Farmacia Pampa" required>
@@ -66,15 +61,12 @@
                     </div>
                 </div>
 
-                <!-- SECCIÓN: CONFIGURACIÓN DE RED -->
                 <div class="form-section">
                     <h3 class="section-title">Configuración de Conexión</h3>
-                    
                     <div class="form-group">
                         <label for="nombreRed">Nombre de la Red (SSID)</label>
                         <input type="text" id="nombreRed" placeholder="Ej. WiFi_Casa_Perez" required>
                     </div>
-
                     <div class="form-group">
                         <label for="password">Contraseña de Red WiFi</label>
                         <input type="text" id="password" class="password-field" placeholder="Ej. P@ssw0rd2026!" required>
@@ -86,26 +78,31 @@
         </div>
     </div>
 
-    <script type="module">
-        import { initializeApp } from "https://gstatic.com";
-        import { getFirestore, collection, addDoc } from "https://gstatic.com";
+    <script>
+        // Tus datos reales integrados al 100% de tus capturas
+        const SUPABASE_URL = "https://supabase.co"; 
+        const SUPABASE_ANON_KEY = "sb_publishable_XXjNw0LJ7HroXlhobY3vTg_l3ofqWMa";
 
-        // Tus datos oficiales de Firebase integrados al 100% de tu captura
-        const firebaseConfig = {
-            apiKey: "AIzaSyCd5mbGW3sbeV2Cp3vjeVwiiD2QzvSymjo",
-            authDomain: "://firebaseapp.com",
-            projectId: "wi-fi-dcfd6",
-            storageBucket: "wi-fi-dcfd6.firebasestorage.app",
-            messagingSenderId: "903524317999",
-            appId: "1:903524317999:web:11867a826e078b5a077fda",
-            measurementId: "G-8417484NY2"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         const selectBarrio = document.getElementById("barrioSelect");
         const inputBarrioManual = document.getElementById("barrioManual");
+        async function incorporarBarriosNuevos() {
+            try {
+                const { data, error } = await supabaseClient.from('redes_wifi').select('barrio');
+                if (data) {
+                    let barriosExistentes = ["Centro", "Aviación", "San Cayetano", "Primavera", "NUEVO_BARRIO"];
+                    data.forEach(row => {
+                        if (row.barrio && !barriosExistentes.includes(row.barrio)) {
+                            barriosExistentes.push(row.barrio);
+                            var opt = document.createElement("option");
+                            opt.value = row.barrio;
+                            opt.textContent = "Barrio " + row.barrio;
+                            selectBarrio.insertBefore(opt, selectBarrio.lastChild);
+                        }
+                    });
+                }
+            } catch(e) { console.log(e); }
+        }
 
         selectBarrio.addEventListener("change", function() {
             if (this.value === "NUEVO_BARRIO") {
@@ -124,26 +121,25 @@
             
             var barrioFinal = selectBarrio.value === "NUEVO_BARRIO" ? inputBarrioManual.value.trim() : selectBarrio.value;
             var direccionTxt = document.getElementById("direccion").value.trim();
-            var localidadTxt = document.getElementById("localidad").value;
-            var direccionCompleta = direccionTxt + " (B° " + barrioFinal + "), " + localidadTxt;
+            var direccionCompleta = direccionTxt + " (B° " + barrioFinal + "), Pampa del Infierno";
             
-            try {
-                await addDoc(collection(db, "redes_wifi"), {
-                    nombre: document.getElementById("nombreCliente").value.trim(),
-                    ubicacion: direccionCompleta,
-                    barrio: barrioFinal,
-                    red: document.getElementById("nombreRed").value.trim(),
-                    password: document.getElementById("password").value
-                });
-                
-                alert("¡Registro guardado exitosamente en la nube!");
-                document.getElementById("wifiForm").reset();
+            const { error } = await supabaseClient.from('redes_wifi').insert([
+                { 
+                    nombre: document.getElementById("nombreCliente").value.trim(), 
+                    ubicacion: direccionCompleta, 
+                    barrio: barrioFinal, 
+                    red: document.getElementById("nombreRed").value.trim(), 
+                    password: document.getElementById("password").value 
+                }
+            ]);
+
+            if (error) {
+                alert("Error al guardar en Supabase. Revisa que hayas creado la tabla 'redes_wifi' en el SQL Editor.");
+            } else {
+                alert("¡Registro almacenado en Supabase Cloud con éxito!");
                 window.location.href = "registros.html";
-            } catch (error) {
-                console.error("Error al guardar: ", error);
-                alert("Error al conectar con la base de datos.");
             }
         });
+
+        document.addEventListener("DOMContentLoaded", incorporarBarriosNuevos);
     </script>
-</body>
-</html>
