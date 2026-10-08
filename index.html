@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WiFiVault - Registro Seguro</title>
     <link rel="stylesheet" href="style.css">
+    <!-- Scripts Oficiales de Google Firebase (Compatibilidad Absoluta) -->
+    <script src="https://gstatic.com"></script>
+    <script src="https://gstatic.com"></script>
 </head>
 <body>
 
@@ -95,10 +98,8 @@
         </div>
     </div>
 
-    <script type="module">
-        import { initializeApp } from "https://gstatic.com";
-        import { getFirestore, collection, addDoc } from "https://gstatic.com";
-
+    <script>
+        // Configuración real integrada
         const firebaseConfig = {
             apiKey: "AIzaSyCd5mbGW3sbeV2Cp3vjeVwiiD2QzvSymjo",
             authDomain: "://firebaseapp.com",
@@ -109,8 +110,9 @@
             measurementId: "G-8417484NY2"
         };
 
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+        // Inicialización clásica inbloqueable
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
 
         const mapaCalles = {
             "Centro": ["Av. 25 de Mayo", "Av. San Martín", "Calle Rivadavia", "Calle Belgrano", "Calle Sarmiento"],
@@ -150,7 +152,7 @@
             }
         });
 
-        document.getElementById("wifiForm").addEventListener("submit", async function(e) {
+        document.getElementById("wifiForm").addEventListener("submit", function(e) {
             e.preventDefault();
             const calleTxt = (campoCalle.style.display === "none") ? campoManual.value.trim() : campoCalle.value;
             const barrioTxt = campoBarrio.value;
@@ -158,21 +160,22 @@
             const locTxt = document.getElementById("localidad").value;
             const dirUnificada = calleTxt + " " + alturaTxt + " (B° " + barrioTxt + "), " + locTxt;
             
-            try {
-                await addDoc(collection(db, "redes_wifi"), {
-                    nombre: document.getElementById("nombreCliente").value.trim(),
-                    ubicacion: dirUnificada,
-                    red: document.getElementById("nombreRed").value.trim(),
-                    password: document.getElementById("password").value,
-                    timestamp: Date.now()
-                });
+            db.collection("redes_wifi").add({
+                nombre: document.getElementById("nombreCliente").value.trim(),
+                ubicacion: dirUnificada,
+                red: document.getElementById("nombreRed").value.trim(),
+                password: document.getElementById("password").value,
+                timestamp: Date.now()
+            })
+            .then(function() {
                 alert("¡Registro guardado en la nube con éxito!");
                 document.getElementById("wifiForm").reset();
                 window.location.href = "registros.html";
-            } catch (err) {
+            })
+            .catch(function(err) {
                 console.error(err);
                 alert("Error al conectar con el servidor.");
-            }
+            });
         });
     </script>
 </body>
