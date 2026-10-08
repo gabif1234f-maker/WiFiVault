@@ -5,9 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WiFiVault - Registro Seguro</title>
     <link rel="stylesheet" href="style.css">
-    <!-- Scripts Oficiales de Google Firebase (Compatibilidad Absoluta) -->
-    <script src="https://gstatic.com"></script>
-    <script src="https://gstatic.com"></script>
 </head>
 <body>
 
@@ -98,8 +95,10 @@
         </div>
     </div>
 
-    <script>
-        // Configuración real integrada
+    <script type="module">
+        import { initializeApp } from "https://gstatic.com";
+        import { getFirestore, collection, addDoc } from "https://gstatic.com";
+
         const firebaseConfig = {
             apiKey: "AIzaSyCd5mbGW3sbeV2Cp3vjeVwiiD2QzvSymjo",
             authDomain: "://firebaseapp.com",
@@ -110,23 +109,22 @@
             measurementId: "G-8417484NY2"
         };
 
-        // Inicialización clásica inbloqueable
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
 
-        const mapaCalles = {
+        var mapaCalles = {
             "Centro": ["Av. 25 de Mayo", "Av. San Martín", "Calle Rivadavia", "Calle Belgrano", "Calle Sarmiento"],
             "Aviación": ["Calle Jorge Newbery", "Calle Almandos Almonacid", "Calle Fuerza Aérea", "Calle Los Inmigrantes"],
             "San Cayetano": ["Calle San Cayetano", "Calle Padre Grote", "Calle San Martín Prolongación"],
             "Primavera": ["Calle 21 de Septiembre", "Calle Las Flores", "Calle El Ceibo", "Calle Los Lapachos"]
         };
 
-        const campoBarrio = document.getElementById("barrio");
-        const campoCalle = document.getElementById("calle");
-        const campoManual = document.getElementById("calleManual");
+        var campoBarrio = document.getElementById('barrio');
+        var campoCalle = document.getElementById('calle');
+        var campoManual = document.getElementById('calleManual');
 
-        campoBarrio.addEventListener("change", function() {
-            const elegido = campoBarrio.value;
+        campoBarrio.addEventListener('change', function() {
+            var elegido = this.value;
             campoCalle.innerHTML = '<option value="" disabled selected>Selecciona una calle...</option>';
             
             if (elegido === "Otro" || !mapaCalles[elegido]) {
@@ -142,40 +140,41 @@
                 campoManual.style.display = "none";
                 campoManual.required = false;
 
-                const lista = mapaCalles[elegido];
-                for (let i = 0; i < lista.length; i++) {
-                    const opt = document.createElement("option");
-                    opt.value = lista[i];
-                    opt.textContent = lista[i];
-                    campoCalle.appendChild(opt);
-                }
+                var lista = mapaCalles[elegido];
+                lista.forEach(function(calle) {
+                    var opcion = document.createElement('option');
+                    opcion.value = calle;
+                    opcion.textContent = calle;
+                    campoCalle.appendChild(opcion);
+                });
             }
         });
 
-        document.getElementById("wifiForm").addEventListener("submit", function(e) {
+        document.getElementById('wifiForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-            const calleTxt = (campoCalle.style.display === "none") ? campoManual.value.trim() : campoCalle.value;
-            const barrioTxt = campoBarrio.value;
-            const alturaTxt = document.getElementById("altura").value.trim();
-            const locTxt = document.getElementById("localidad").value;
-            const dirUnificada = calleTxt + " " + alturaTxt + " (B° " + barrioTxt + "), " + locTxt;
             
-            db.collection("redes_wifi").add({
-                nombre: document.getElementById("nombreCliente").value.trim(),
-                ubicacion: dirUnificada,
-                red: document.getElementById("nombreRed").value.trim(),
-                password: document.getElementById("password").value,
-                timestamp: Date.now()
-            })
-            .then(function() {
+            var calleTxt = campoCalle.style.display === "none" ? campoManual.value.trim() : campoCalle.value;
+            var barrioTxt = campoBarrio.value;
+            var alturaTxt = document.getElementById('altura').value.trim();
+            var locTxt = document.getElementById('localidad').value;
+            var dirUnificada = calleTxt + " " + alturaTxt + " (B° " + barrioTxt + "), " + locTxt;
+            
+            try {
+                await addDoc(collection(db, "redes_wifi"), {
+                    nombre: document.getElementById('nombreCliente').value.trim(),
+                    ubicacion: dirUnificada,
+                    red: document.getElementById('nombreRed').value.trim(),
+                    password: document.getElementById('password').value,
+                    timestamp: Date.now()
+                });
+                
                 alert("¡Registro guardado en la nube con éxito!");
-                document.getElementById("wifiForm").reset();
+                document.getElementById('wifiForm').reset();
                 window.location.href = "registros.html";
-            })
-            .catch(function(err) {
-                console.error(err);
-                alert("Error al conectar con el servidor.");
-            });
+            } catch (error) {
+                console.error("Error al guardar: ", error);
+                alert("Error al guardar en la nube.");
+            }
         });
     </script>
 </body>
