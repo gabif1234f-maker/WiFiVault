@@ -10,6 +10,7 @@
 <body>
 
     <div class="app-layout large-layout">
+        <!-- Barra de navegación superior -->
         <div class="top-nav">
             <div class="nav-brand">
                 <span class="brand-icon">📊</span>
@@ -18,6 +19,7 @@
             <a href="index.html" class="btn-nav btn-nav-accent">➕ Nuevo Registro</a>
         </div>
 
+        <!-- Tabla y Controles -->
         <div class="main-card">
             <div class="controls-toolbar">
                 <div class="search-wrapper">
@@ -35,11 +37,11 @@
                             <th>Dirección Asignada</th>
                             <th>Red (SSID)</th>
                             <th>Contraseña de Seguridad</th>
-                            <th style="text-align: center; width: 150px;">Acciones</th>
+                            <th style="text-align: center; width: 160px;">Acciones</th>
                         </tr>
                     </thead>
                     <tbody id="tablaClientes">
-                        <tr><td colspan="5" class="empty-msg">Cargando datos desde Supabase Cloud...</td></tr>
+                        <tr><td colspan="5" class="empty-msg" id="mensajeEstado">Cargando datos desde Supabase Cloud...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -47,7 +49,7 @@
     </div>
 
     <script>
-        const SUPABASE_URL = "https://supabase.co"; 
+        const SUPABASE_URL = "https://uwefwdfjfnoknkkobnzn.supabase.co"; 
         const SUPABASE_ANON_KEY = "sb_publishable_XXjNw0LJ7HroXlhobY3vTg_l3ofqWMa";
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -56,6 +58,7 @@
         }
         async function mostrarRegistros(filtro = "") {
             var tablaBody = document.getElementById('tablaClientes');
+            var msgEstado = document.getElementById('mensajeEstado');
             
             const { data: listaClientes, error } = await supabaseClient.from('redes_wifi').select('*');
             if (error) {
@@ -64,7 +67,6 @@
             }
 
             actualizarContador(listaClientes.length);
-            tablaBody.innerHTML = "";
 
             var listaFiltrada = listaClientes.filter(function(cliente) {
                 var n = cliente.nombre ? cliente.nombre.toLowerCase() : "";
@@ -77,6 +79,8 @@
                 return;
             }
 
+            tablaBody.innerHTML = "";
+
             listaFiltrada.forEach(function(cliente) {
                 var fila = document.createElement('tr');
                 fila.id = "fila-" + cliente.id;
@@ -86,18 +90,41 @@
                     <td><span class="badge-ssid" id="label-red-${cliente.id}">${cliente.red}</span></td>
                     <td>
                         <div class="password-container-row">
-                            <span class="crypto-password" id="label-password-${cliente.id}">${cliente.password}</span>
-                            <button class="btn-copy" data-pass="${cliente.password}">📋</button>
+                            <!-- Contraseña oculta por defecto usando estilo especial -->
+                            <span class="crypto-password password-hidden" id="label-password-${cliente.id}" data-real-pass="${cliente.password}">••••••••</span>
+                            <button class="btn-copy btn-eye" data-id="${cliente.id}" title="Mostrar/Ocultar">👁️</button>
+                            <button class="btn-copy" data-pass="${cliente.password}" title="Copiar">📋</button>
                         </div>
                     </td>
                     <td style="text-align: center;">
-                        <button class="btn-delete" data-id="${cliente.id}">❌</button>
+                        <div class="actions-container-row">
+                            <button class="btn-edit" data-id="${cliente.id}">⚙️</button>
+                            <button class="btn-delete" data-id="${cliente.id}">❌</button>
+                        </div>
                     </td>
                 `;
                 tablaBody.appendChild(fila);
             });
 
-            document.querySelectorAll('.btn-copy').forEach(btn => {
+            // ACCIÓN: MOSTRAR / OCULTAR CONTRASEÑA (CON EL OJO)
+            document.querySelectorAll('.btn-eye').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    var id = this.getAttribute('data-id');
+                    var targetSpan = document.getElementById('label-password-' + id);
+                    if (targetSpan.classList.contains('password-hidden')) {
+                        targetSpan.innerText = targetSpan.getAttribute('data-real-pass');
+                        targetSpan.classList.remove('password-hidden');
+                        this.innerText = "🔒";
+                    } else {
+                        targetSpan.innerText = "••••••••";
+                        targetSpan.classList.add('password-hidden');
+                        this.innerText = "👁️";
+                    }
+                });
+            });
+
+            // ACCIÓN: COPIAR AL PORTAPAPELES
+            document.querySelectorAll('.btn-copy:not(.btn-eye)').forEach(btn => {
                 btn.addEventListener('click', function() {
                     var pass = this.getAttribute('data-pass');
                     var boton = this;
@@ -108,6 +135,15 @@
                 });
             });
 
+            // ACCIÓN: ACTIVAR EDICIÓN INLINE
+            document.querySelectorAll('.btn-edit').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    var id = this.getAttribute('data-id');
+                    activarEdicion(id);
+                });
+            });
+
+            // ACCIÓN: ELIMINAR DE LA NUBE
             document.querySelectorAll('.btn-delete').forEach(btn => {
                 btn.addEventListener('click', function() {
                     var id = this.getAttribute('data-id');
@@ -116,8 +152,66 @@
             });
         }
 
+        function activarEdicion(id) {
+            var lblNombre = document.getElementById('label-nombre-' + id);
+            var lblUbicacion = document.getElementById('label-ubicacion-' + id);
+            var lblRed = document.getElementById('label-red-' + id);
+            var lblPassword = document.getElementById('label-password-' + id);
+            var fila = document.getElementById('fila-' + id);
+
+            var btnEdit = fila.querySelector('.btn-edit');
+            var btnDel = fila.querySelector('.btn-delete');
+
+            var passReal = lblPassword.getAttribute('data-real-pass') || lblPassword.innerText;
+
+            lblNombre.innerHTML = `<input type="text" class="table-input" id="edit-nombre-${id}" value="${lblNombre.innerText}">`;
+            lblUbicacion.innerHTML = `<input type="text" class="table-input" id="edit-ubicacion-${id}" value="${lblUbicacion.innerText}">`;
+            lblRed.innerHTML = `<input type="text" class="table-input" id="edit-red-${id}" value="${lblRed.innerText}">`;
+            
+            var parentPass = lblPassword.parentElement;
+            parentPass.innerHTML = `<input type="text" class="table-input password-field" id="edit-password-${id}" value="${passReal}">`;
+
+            btnEdit.textContent = "¼";
+            btnEdit.className = "btn-save-inline";
+            
+            var clonEdit = btnEdit.cloneNode(true);
+            btnEdit.parentNode.replaceChild(clonEdit, btnEdit);
+            clonEdit.addEventListener('click', function() { guardarEdicion(id); });
+
+            btnDel.textContent = "↩️";
+            btnDel.className = "btn-cancel-inline";
+            var clonDel = btnDel.cloneNode(true);
+            btnDel.parentNode.replaceChild(clonDel, btnDel);
+            clonDel.addEventListener('click', function() { mostrarRegistros(document.getElementById('inputBuscar').value); });
+        }
+
+        async function guardarEdicion(id) {
+            var valNombre = document.getElementById('edit-nombre-' + id).value.trim();
+            var valUbicacion = document.getElementById('edit-ubicacion-' + id).value.trim();
+            var valRed = document.getElementById('edit-red-' + id).value.trim();
+            var valPassword = document.getElementById('edit-password-' + id).value;
+
+            if (!valNombre || !valUbicacion || !valRed || !valPassword) {
+                alert("Campos vacíos.");
+                return;
+            }
+
+            const { error } = await supabaseClient.from('redes_wifi').update({
+                nombre: valNombre,
+                ubicacion: valUbicacion,
+                red: valRed,
+                password: valPassword
+            }).eq('id', id);
+
+            if (error) {
+                alert("Error al actualizar.");
+            } else {
+                mostrarRegistros(document.getElementById('inputBuscar').value);
+            }
+        }
+
         async function eliminarRegistro(id) {
-            if (confirm("¿Purgar este registro de Supabase?")) {
+            if (confirm("¿Purgar este registro de Supabase Cloud?")) {
                 await supabaseClient.from('redes_wifi').delete().eq('id', id);
                 mostrarRegistros(document.getElementById('inputBuscar').value);
             }
