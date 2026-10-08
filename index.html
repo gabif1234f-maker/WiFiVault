@@ -56,7 +56,6 @@
                                 <option value="Primavera">Barrio Primavera</option>
                                 <option value="NUEVO_BARRIO">➕ Agregar Nuevo Barrio...</option>
                             </select>
-                            <!-- Cuadro de texto para agregar barrio a mano -->
                             <input type="text" id="barrioManual" placeholder="Escribe el nombre del barrio..." style="display: none; margin-top: 8px;">
                         </div>
                     </div>
@@ -89,7 +88,7 @@
 
     <script type="module">
         import { initializeApp } from "https://gstatic.com";
-        import { getFirestore, collection, addDoc, getDocs } from "https://gstatic.com";
+        import { getFirestore, collection, addDoc } from "https://gstatic.com";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCd5mbGW3sbeV2Cp3vjeVwiiD2QzvSymjo",
@@ -106,30 +105,6 @@
 
         const selectBarrio = document.getElementById("barrioSelect");
         const inputBarrioManual = document.getElementById("barrioManual");
-        // 1. CARGAR BARRIOS ADICIONALES GUARDADOS ANTERIORMENTE (SOPORTE DE RESPALDO)
-        async function incorporarBarriosNuevos() {
-            try {
-                const querySnapshot = await getDocs(collection(db, "redes_wifi"));
-                let barriosExistentes = ["Centro", "Aviación", "San Cayetano", "Primavera", "NUEVO_BARRIO"];
-                
-                querySnapshot.forEach((docSnap) => {
-                    var data = docSnap.data();
-                    if (data.barrio && !barriosExistentes.includes(data.barrio)) {
-                        barriosExistentes.push(data.barrio);
-                        
-                        // Insertar el nuevo barrio dinámico antes de la opción manual de agregar
-                        var opt = document.createElement("option");
-                        opt.value = data.barrio;
-                        opt.textContent = "Barrio " + data.barrio;
-                        selectBarrio.insertBefore(opt, document.getElementById("barrioSelect").lastChild);
-                    }
-                });
-            } catch (err) {
-                console.log("Modo inicial o reglas restringidas: se usan barrios base.");
-            }
-        }
-
-        // Controlar visualización de la caja de texto manual
         selectBarrio.addEventListener("change", function() {
             if (this.value === "NUEVO_BARRIO") {
                 inputBarrioManual.style.display = "block";
@@ -141,15 +116,14 @@
                 inputBarrioManual.required = false;
             }
         });
-        // 2. GUARDAR DATOS EN FIRESTORE CLOUD (SIMPLIFICADO E INBLOQUEABLE)
+
         document.getElementById("wifiForm").addEventListener("submit", async function(e) {
             e.preventDefault();
             
             var barrioFinal = selectBarrio.value === "NUEVO_BARRIO" ? inputBarrioManual.value.trim() : selectBarrio.value;
             var direccionTxt = document.getElementById("direccion").value.trim();
             var localidadTxt = document.getElementById("localidad").value;
-            
-            var direccionCompleta = direccionTxt + " (B° " + barrioFinal + "), " + localidadFinal;
+            var direccionCompleta = direccionTxt + " (B° " + barrioFinal + "), " + localidadTxt;
             
             try {
                 await addDoc(collection(db, "redes_wifi"), {
@@ -158,7 +132,6 @@
                     barrio: barrioFinal,
                     red: document.getElementById("nombreRed").value.trim(),
                     password: document.getElementById("password").value
-                    // Quitamos la línea de timestamp para evitar el bloqueo de índices de Firebase
                 });
                 
                 alert("¡Registro guardado exitosamente en la nube!");
@@ -169,9 +142,6 @@
                 alert("Error al conectar con la base de datos.");
             }
         });
-
-
-        document.addEventListener("DOMContentLoaded", incorporarBarriosNuevos);
     </script>
 </body>
 </html>

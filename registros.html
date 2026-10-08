@@ -76,7 +76,6 @@
             if (!tablaBody) return;
 
             try {
-                // Descarga directa sin ordenamiento para saltear el bloqueo de índices de Firebase
                 const querySnapshot = await getDocs(collection(db, "redes_wifi"));
                 let listaClientes = [];
                 querySnapshot.forEach((docSnap) => {
@@ -122,7 +121,6 @@
                     tablaBody.appendChild(fila);
                 });
 
-                // ASIGNACIÓN DE ACCIONES IN-MODULE
                 document.querySelectorAll('.btn-copy').forEach(btn => {
                     btn.addEventListener('click', function() {
                         var pass = this.getAttribute('data-pass');
@@ -149,8 +147,8 @@
                 });
 
             } catch (error) {
-                console.error("Error al conectar: ", error);
-                tablaBody.innerHTML = '<tr><td colspan="5" class="empty-msg">Error de comunicación con el servidor de la nube.</td></tr>';
+                console.error("Error: ", error);
+                tablaBody.innerHTML = '<tr><td colspan="5" class="empty-msg">Error de comunicación con el servidor.</td></tr>';
             }
         }
 
