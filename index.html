@@ -95,8 +95,7 @@
         </div>
     </div>
 
-      <script type="module">
-        // URLs oficiales de Google Firebase corregidas sin errores de tipeo (CORS Ok)
+    <script type="module">
         import { initializeApp } from "https://gstatic.com";
         import { getFirestore, collection, addDoc } from "https://gstatic.com";
 
@@ -113,7 +112,6 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Diccionario clásico de calles de Pampa del Infierno
         const mapaCalles = {
             "Centro": ["Av. 25 de Mayo", "Av. San Martín", "Calle Rivadavia", "Calle Belgrano", "Calle Sarmiento"],
             "Aviación": ["Calle Jorge Newbery", "Calle Almandos Almonacid", "Calle Fuerza Aérea", "Calle Los Inmigrantes"],
@@ -125,7 +123,6 @@
         const campoCalle = document.getElementById("calle");
         const campoManual = document.getElementById("calleManual");
 
-        // Función directa de cambio de calles a prueba de fallos
         campoBarrio.addEventListener("change", function() {
             const elegido = campoBarrio.value;
             campoCalle.innerHTML = '<option value="" disabled selected>Selecciona una calle...</option>';
@@ -153,10 +150,8 @@
             }
         });
 
-        // Envío seguro al servidor Firestore
         document.getElementById("wifiForm").addEventListener("submit", async function(e) {
             e.preventDefault();
-            
             const calleTxt = (campoCalle.style.display === "none") ? campoManual.value.trim() : campoCalle.value;
             const barrioTxt = campoBarrio.value;
             const alturaTxt = document.getElementById("altura").value.trim();
@@ -180,6 +175,5 @@
             }
         });
     </script>
-
 </body>
 </html>
