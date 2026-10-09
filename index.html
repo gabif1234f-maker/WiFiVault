@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestor de Contraseñas WI-FI</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1e1e24;
+            color: #ffffff;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .card {
+            background-color: #2a2a35;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 450px;
+        }
+        h2 { margin-top: 0; color: #00b0ff; text-align: center; margin-bottom: 25px; }
+        label { display: block; margin-bottom: 6px; color: #bbbbbb; font-size: 14px; }
+        input {
+            width: 100%; padding: 12px; margin-bottom: 20px;
+            border: 1px solid #444455; border-radius: 8px; font-size: 15px;
+            background-color: #1f1f26; color: #ffffff;
+        }
+        input:focus { border-color: #00b0ff; outline: none; }
+        button {
+            background-color: #00b0ff; color: #1e1e24; border: none; padding: 12px;
+            width: 100%; cursor: pointer; border-radius: 8px; font-size: 16px; font-weight: bold;
+            transition: background-color 0.2s;
+        }
+        button:hover { background-color: #0081cb; color: white; }
+        .link-text { text-align: center; margin-top: 15px; font-size: 14px; color: #aaaaaa; }
+        .link-text span { color: #00b0ff; cursor: pointer; text-decoration: underline; }
+        
+        .wide-card { max-width: 700px; }
+        .logout-btn { background-color: #ff5252; color: white; margin-top: 20px; }
+        .logout-btn:hover { background-color: #d32f2f; }
+        
+        .ubi-group { display: flex; gap: 10px; margin-bottom: 20px; width: 100%; }
+        .ubi-group input { margin-bottom: 0; }
+        .maps-btn { background-color: #4caf50; color: white; width: auto; padding: 0 15px; font-size: 18px; }
+        .maps-btn:hover { background-color: #388e3c; }
+
+        .wifi-item {
+            background-color: #1f1f26; padding: 15px; border-radius: 8px;
+            margin-bottom: 15px; border-left: 4px solid #00b0ff;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .wifi-info p { margin: 4px 0; }
+        .wifi-name { font-weight: bold; font-size: 18px; color: #00b0ff; }
+        .wifi-pass { font-family: monospace; color: #00e676; background: #2a2a35; padding: 4px 8px; border-radius: 4px; font-size: 15px; }
+        
+        /* Estilos del enlace directo de Google Maps */
+        .ver-mapa-link {
+            background-color: #e91e63; color: white; border: none; padding: 6px 12px; 
+            border-radius: 6px; font-size: 13px; cursor: pointer; margin-top: 5px; 
+            font-weight: bold; display: inline-block; text-decoration: none; text-align: center;
+        }
+        .ver-mapa-link:hover { background-color: #c2185b; }
+    </style>
+</head>
+<body>
+
+    <!-- 1. LOGIN -->
+    <div id="vistaLogin" class="card">
+        <h2>Iniciar Sesión</h2>
+        <form id="formLogin">
+            <label for="loginCorreo">Correo Electrónico:</label>
+            <input type="email" id="loginCorreo" required placeholder="tu@correo.com">
+
+            <label for="loginClave">Contraseña Web:</label>
+            <input type="password" id="loginClave" required placeholder="******">
+
+            <button type="submit">Ingresar al Gestor</button>
+        </form>
+        <p class="link-text">¿No tienes cuenta? <span id="btnIrARegistro">Regístrate aquí</span></p>
+    </div>
+
+    <!-- 2. REGISTRO -->
+    <div id="vistaRegistro" class="card" style="display: none;">
+        <h2>Crear Cuenta</h2>
+        <form id="formRegistro">
+            <label for="regNombre">Nombre Completo:</label>
+            <input type="text" id="regNombre" required placeholder="Ej. Gabriel">
+
+            <label for="regCorreo">Correo Electrónico:</label>
+            <input type="email" id="regCorreo" required placeholder="tu@correo.com">
+
+            <label for="regClave">Contraseña de la Cuenta:</label>
+            <input type="password" id="regClave" required placeholder="Mínimo 6 caracteres">
+
+            <button type="submit">Registrar Cuenta</button>
+        </form>
+        <p class="link-text">¿Ya tienes cuenta? <span id="btnIrALogin">Inicia sesión</span></p>
+    </div>
+
+    <!-- 3. DASHBOARD -->
+    <div id="vistaDashboard" class="card wide-card" style="display: none;">
+        <h2>Mis Redes WI-FI Guardadas</h2>
+        
+        <form id="formWifi" style="margin-bottom: 30px; background: #1f1f26; padding: 15px; border-radius: 8px;">
+            <h4 style="margin-top:0; color:#00b0ff;">+ Agregar Nueva Red</h4>
+            
+            <label for="wifiSsid">Nombre WI-FI (SSID):</label>
+            <input type="text" id="wifiSsid" placeholder="Ej. Telecentro-2.4G" required>
+            
+            <label for="wifiClave">Contraseña de la Red:</label>
+            <input type="text" id="wifiClave" placeholder="Ej. 12345678" required>
+            
+            <label for="wifiUbi">Ubicación o Enlace de Google Maps:</label>
+            <div class="ubi-group">
+                <input type="text" id="wifiUbi" placeholder="Escribe la ubicación o usa el botón ➡️" required>
+                <button type="button" id="btnGeolocalizar" class="maps-btn" title="Obtener ubicación actual">📍</button>
+            </div>
+
+            <button type="submit">Guardar WI-FI</button>
+        </form>
+
+        <div id="listaContrasenas">
+            <p style="text-align: center; color: #aaaaaa;">Cargando tus redes desde la nube...</p>
+        </div>
+
+        <button id="btnCerrarSesion" class="logout-btn">Cerrar Sesión</button>
+    </div>
+
+       <!-- Cambiado a conexion.js para romper la memoria caché del navegador -->
+    <script src="conexion.js"></script>
+</body>
+</html>
+
