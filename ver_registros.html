@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WI-FI Gestor - Redes Registradas</title>
+    <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+
+    <!-- 1. Fila de Filtros de Búsqueda (Ya la tienes arriba) -->
+<!-- 1. ENCABEZADO DE LA PÁGINA -->
+<div style="display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 1150px; margin: 0 auto 20px auto;">
+    <a href="menu.html" class="btn-volver">← Volver al Menú</a>
+    <h2>⚡ Redes WI-FI Almacenadas</h2>
+</div>
+
+<!-- 2. BARRA DE FILTROS DE BÚSQUEDA (CIERRE COMPLETO DE CONTROL) -->
+<div class="barra-busqueda" style="width: 100%; max-width: 1150px; margin: 0 auto 20px auto;">
+    <input type="text" id="buscarCliente" placeholder="🔍 Buscar por cliente...">
+    <select id="filtrarLocalidad">
+        <option value="">📍 Todas las localidades</option>
+    </select>
+    <input type="text" id="buscarBarrio" placeholder="🏡 Buscar por barrio...">
+</div>
+
+<!-- 3. PANEL DE CONTADORES HORIZONTALES (LIBRE DE COLUMNAS) -->
+<div class="contenedor-contadores">
+    <div class="tarjeta-contador">
+        <div class="icono-contador">📶</div>
+        <div class="datos-contador">
+            <h3 id="cont-redes">14</h3>
+            <p>REDES TOTALES</p>
+        </div>
+    </div>
+    
+    <div class="tarjeta-contador">
+        <div class="icono-contador">👤</div>
+        <div class="datos-contador">
+            <h3 id="cont-clientes">14</h3>
+            <p>CLIENTELA</p>
+        </div>
+    </div>
+    
+    <div class="tarjeta-contador">
+        <div class="icono-contador">📍</div>
+        <div class="datos-contador">
+            <h3 id="cont-localidades">1</h3>
+            <p>LOCALIDADES</p>
+        </div>
+    </div>
+    
+    <div class="tarjeta-contador">
+        <div class="icono-contador">🏡</div>
+        <div class="datos-contador">
+            <h3 id="cont-barrios">9</h3>
+            <p>BARRIOS</p>
+        </div>
+    </div>
+</div>
+
+<!-- 4. CONTENEDOR DE DOS COLUMNAS PRINCIPALES -->
+<div class="contenedor-formulario ancho-registros" style="margin: 0 auto;">
+    
+    <!-- COLUMNA IZQUIERDA: TARJETAS DE LOS CLIENTES -->
+    <div class="columna-lista" id="listaContrasenas">
+        <!-- Las tarjetas se inyectan dinámicamente con JavaScript -->
+    </div>
+    
+    <!-- COLUMNA DERECHA: PANEL DE MODIFICACIÓN FIJO -->
+    <div class="columna-panel-fijo">
+        <h3>📝 Panel de Modificación Directa</h3>
+        <form id="formPanelFijoEdicion">
+            <input type="hidden" id="editIdDoc">
+            
+            <div class="grupo-campo">
+                <label>Cliente:</label>
+                <input type="text" id="editCliente">
+            </div>
+            <div class="grupo-campo">
+                <label>Nombre WI-FI (SSID):</label>
+                <input type="text" id="editSsid">
+            </div>
+            <div class="grupo-campo">
+                <label>Contraseña:</label>
+                <input type="text" id="editClave">
+            </div>
+            <div class="grupo-campo">
+                <label>📍 Localidad:</label>
+                <input type="text" id="editLocalidad">
+            </div>
+            <div class="grupo-campo">
+                <label>🏡 Barrio:</label>
+                <input type="text" id="editBarrio">
+            </div>
+            <div class="grupo-campo">
+                <label>🛣️ Calle / Altura / Esquinas:</label>
+                <input type="text" id="editCalle">
+            </div>
+            <div class="grupo-campo">
+                <label>🌐 Latitud:</label>
+                <input type="text" id="editLatitud">
+            </div>
+            <div class="grupo-campo">
+                <label>🌐 Longitud:</label>
+                <input type="text" id="editLongitud">
+            </div>
+            
+            <button type="submit" class="btn-enviar">Guardar Cambios</button>
+        </form>
+    </div>
+
+</div>
+
+
+        <!-- VENTANA FLOTANTE DEL MAPA EN VIVO -->
+        <div id="modalMapa" class="modal-oculto">
+            <div class="modal-contenido" style="max-width: 650px;">
+                <span id="cerrarModalMapa" class="btn-cerrar-modal">&times;</span>
+                <h3 id="tituloMapaCliente" style="margin-bottom: 12px; font-size: 16px;">🗺️ Ubicación</h3>
+                <div style="width: 100%; height: 380px; border-radius: 8px; overflow: hidden; border: 1px solid #24293e;">
+                    <iframe id="iframeMapa" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    
+    <script src="conexion.js"></script>
+</body>
+</html>
