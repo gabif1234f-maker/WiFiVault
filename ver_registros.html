@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WI-FI Gestor - Redes Registradas</title>
+    <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+    <div class="contenedor-formulario" style="max-width: 900px; margin: 20px auto;">
+        <a href="menu.html" class="btn-volver">⬅ Volver al Menú</a>
+        <h2>📂 Redes WI-FI Almacenadas</h2>
+        <!-- BARRA DE BÚSQUEDA PREDICTIVA EN TIEMPO REAL -->
+        <div class="barra-busqueda" style="display: flex; gap: 12px; margin-bottom: 25px; flex-wrap: wrap;">
+            <input type="text" id="buscarCliente" placeholder="🔍 Buscar por cliente..." style="flex: 1; min-width: 150px;">
+            <select id="filtrarLocalidad" style="flex: 1; min-width: 150px;">
+                <option value="">📍 Todas las localidades</option>
+            </select>
+            <input type="text" id="buscarBarrio" placeholder="🏡 Buscar por barrio..." style="flex: 1; min-width: 150px;">
+        </div>
+        <!-- CONTENEDOR DONDE SE INYECTAN LAS TARJETAS WI-FI -->
+        <div id="listaContrasenas">
+            <p style="text-align: center; color: #aaaaaa;">Cargando registros desde la nube...</p>
+        </div>
+        
+        <!-- VENTANA MODAL FLOTANTE PARA EDICIÓN RÁPIDA -->
+        <div id="modalEditar" class="modal-oculto">
+            <div class="modal-contenido">
+                <span id="cerrarModal" class="btn-cerrar-modal">&times;</span>
+                <h3>✏️ Editar Registro</h3>
+                <form id="formEditarModal">
+                    <input type="hidden" id="editIdDoc">
+                    <div class="grupo-campo">
+                        <label>Cliente:</label>
+                        <input type="text" id="editCliente" required>
+                    </div>
+                    <div class="grupo-campo">
+                        <label>Nombre WI-FI (SSID):</label>
+                        <input type="text" id="editSsid" required>
+                    </div>
+                    <div class="grupo-campo">
+                        <label>Contraseña:</label>
+                        <input type="text" id="editClave" required>
+                    </div>
+                    <div class="grupo-campo">
+                        <label>Ubicación Completa:</label>
+                        <input type="text" id="editUbicacion" required>
+                    </div>
+                    <button type="submit" class="btn-enviar" style="background: #00a8ff;">💾 Guardar Cambios</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script src="conexion.js"></script>
+</body>
+</html>

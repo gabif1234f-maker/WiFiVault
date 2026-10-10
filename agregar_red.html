@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WI-FI Gestor - Agregar Red</title>
+    <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+    <div class="contenedor-formulario">
+        <a href="menu.html" class="btn-volver">⬅ Volver al Menú</a>
+        <h2>+ Registrar Nueva Red WI-FI</h2>
+        
+        <form id="formWifi">
+            <!-- Datos del Cliente -->
+            <div class="grupo-campo">
+                <label for="wifiCliente">Nombre del Cliente:</label>
+                <input type="text" id="wifiCliente" placeholder="Ej. Juan Pérez" required>
+            </div>
+
+            <div class="grupo-campo">
+                <label for="wifiSsid">Nombre WI-FI (SSID):</label>
+                <input type="text" id="wifiSsid" placeholder="Ej. TeleRed_Cliente" required>
+            </div>
+            <div class="grupo-campo">
+                <label for="wifiClave">Contraseña de la Red:</label>
+                <input type="text" id="wifiClave" placeholder="Escribe la clave de seguridad" required>
+            </div>
+
+            <!-- Selectores de Ubicación Geográfica -->
+            <div class="grupo-campo">
+                <label for="wifiLocalidad">Localidad:</label>
+                <select id="wifiLocalidad" required>
+                    <option value="">-- Cargando localidades... --</option>
+                </select>
+            </div>
+
+            <div class="grupo-campo">
+                <label for="wifiBarrio">Barrio:</label>
+                <select id="wifiBarrio" required>
+                    <option value="">-- Primero selecciona una localidad --</option>
+                </select>
+            </div>
+            <div class="grupo-campo">
+                <label for="wifiCalle">Calle Principal:</label>
+                <select id="wifiCalle" required>
+                    <option value="">-- Primero selecciona un barrio --</option>
+                </select>
+            </div>
+
+            <!-- NUEVO CAMPO: ENTRE CALLE 1 -->
+            <div class="grupo-campo">
+                <label for="wifiEntreCalle1">Entre Calle (Esquina 1):</label>
+                <select id="wifiEntreCalle1" required>
+                    <option value="">-- Primero selecciona un barrio --</option>
+                </select>
+            </div>
+
+            <!-- NUEVO CAMPO: ENTRE CALLE 2 -->
+            <div class="grupo-campo">
+                <label for="wifiEntreCalle2">Y Calle (Esquina 2):</label>
+                <select id="wifiEntreCalle2" required>
+                    <option value="">-- Primero selecciona un barrio --</option>
+                </select>
+            </div>
+            <button type="submit" class="btn-enviar">Guardar en la Nube ☁️</button>
+        </form>
+    </div>
+    <script src="conexion.js"></script>
+</body>
+</html>
