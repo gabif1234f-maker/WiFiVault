@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WI-FI Gestor - Panel Maestro</title>
+    <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+
+    <div class="contenedor-formulario ancho-registros" style="max-width: 950px !important; margin: 20px auto;">
+        
+        <!-- CABECERA -->
+        <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 25px;">
+            <a href="menu.html" class="btn-volver">← Volver al Menú</a>
+            <h2 class="titulo-sistema" style="margin-bottom: 0;">⚡ Panel Maestro de Usuarios <span class="badge-sub" style="color: #ff3838; border-color: #ff3838;">ADMIN</span></h2>
+        </div>
+        
+        <!-- FORMULARIO DIRECTO DE ALTA (NUEVO) -->
+        <div style="background: #11111b; border: 1px dashed #ff3838; padding: 20px; border-radius: 8px; margin-bottom: 25px; box-shadow: 0 0 15px rgba(255, 56, 56, 0.05);">
+            <h3 style="color: #fff; margin-top: 0; margin-bottom: 15px; font-size: 16px; text-transform: uppercase; letter-spacing: 1px;">➕ Registrar Nuevo Usuario / Operador</h3>
+            <form id="formAdminCrearUsuario" style="display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end;">
+                <div style="flex: 1; min-width: 180px;">
+                    <label style="color: #787c99; font-size: 12px; display: block; margin-bottom: 5px;">Nombre Completo</label>
+                    <input type="text" id="adminNuevoNombre" placeholder="Ej: Juan Pérez" required style="width: 100%; margin: 0;">
+                </div>
+                <div style="flex: 1; min-width: 180px;">
+                    <label style="color: #787c99; font-size: 12px; display: block; margin-bottom: 5px;">Correo Electrónico</label>
+                    <input type="email" id="adminNuevoCorreo" placeholder="correo@gmail.com" required style="width: 100%; margin: 0;">
+                </div>
+                <div style="flex: 1; min-width: 140px;">
+                    <label style="color: #787c99; font-size: 12px; display: block; margin-bottom: 5px;">Contraseña inicial</label>
+                    <input type="text" id="adminNuevaClave" placeholder="Mínimo 4 caracteres" required style="width: 100%; margin: 0;">
+                </div>
+                <div style="width: 130px;">
+                    <label style="color: #787c99; font-size: 12px; display: block; margin-bottom: 5px;">Rol de Sistema</label>
+                    <select id="adminNuevoRol" style="width: 100%; margin: 0; background: #161623; color: #fff; border: 1px solid #24293e; height: 42px; border-radius: 5px; padding: 0 10px;">
+                        <option value="operador">⚠️ Operador</option>
+                        <option value="admin">⚡ Admin</option>
+                    </select>
+                </div>
+                <button type="submit" class="menu-btn" style="padding: 0 20px; height: 42px; margin: 0; font-size: 14px; width: auto; font-weight: 600;">Guardar Usuario</button>
+            </form>
+        </div>
+
+        <!-- BARRA DE BÚSQUEDA DE USUARIOS (NUEVO) -->
+        <div class="barra-busqueda" style="width: 100%; margin-bottom: 20px;">
+            <input type="text" id="buscarUsuarioMaster" placeholder="🔍 Filtrar operadores por nombre o correo electrónico..." style="width: 100%;">
+        </div>
+        
+        <!-- LISTADO DINÁMICO -->
+        <div id="listaAdminUsuarios" style="width: 100%; display: flex; flex-direction: column; gap: 12px;">
+            <p style="color: #787c99; font-size: 13px; text-align: center;">Cargando registros de seguridad...</p>
+        </div>
+    </div>
+
+    <script src="admin_conexion.js"></script>
+</body>
+</html>

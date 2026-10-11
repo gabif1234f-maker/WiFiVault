@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WI-FI Gestor - Administrar Zonas</title>
+    <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+    <div class="contenedor-formulario" style="max-width: 1050px; margin: 20px auto;">
+                <!-- BARRA DE ENCABEZADO CON LOGO CYBERPUNK INTEGRADO -->
+        <div style="width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; background: #141622; padding: 12px 20px; border-radius: 8px; border: 1px solid #1f2335;">
+            <a href="menu.html" class="btn-volver" style="margin-bottom: 0;">← Volver al Menú</a>
+            
+            <div class="encabezado-logo-contenedor" style="display: flex; align-items: center; gap: 12px;">
+                <div class="logo-cyber-nodo" style="width: 38px; height: 38px; display: flex; align-items: center; justify-content: center;">
+                    <svg viewBox="0 0 100 100" xmlns="http://w3.org" style="width: 100%; height: 100%;">
+                        <circle cx="50" cy="55" r="38" fill="none" stroke="rgba(255, 56, 56, 0.15)" stroke-width="2" stroke-dasharray="4 4" />
+                        <path d="M25 38 A 30 30 0 0 1 75 38" fill="none" stroke="#ff3838" stroke-width="5" stroke-linecap="round" style="filter: drop-shadow(0 0 6px #ff3838);" />
+                        <path d="M33 46 A 20 20 0 0 1 67 46" fill="none" stroke="#ff3838" stroke-width="5" stroke-linecap="round" style="filter: drop-shadow(0 0 6px #ff3838);" />
+                        <line x1="50" y1="55" x2="50" y2="82" stroke="#787c99" stroke-width="3" stroke-linecap="round" opacity="0.8" />
+                        <line x1="50" y1="68" x2="28" y2="78" stroke="#787c99" stroke-width="3" stroke-linecap="round" opacity="0.8" />
+                        <line x1="50" y1="68" x2="72" y2="78" stroke="#787c99" stroke-width="3" stroke-linecap="round" opacity="0.8" />
+                        <circle cx="50" cy="55" r="5" fill="#ffffff" style="filter: drop-shadow(0 0 8px #ff3838);" />
+                        <circle cx="28" cy="78" r="4" fill="#ff3838" />
+                        <circle cx="72" cy="78" r="4" fill="#ff3838" />
+                        <circle cx="50" cy="82" r="4" fill="#ff3838" />
+                    </svg>
+                </div>
+                <h2 style="margin-bottom: 0; font-size: 20px; font-weight: 700; letter-spacing: 0.5px; color: #ff3838; text-transform: uppercase;">Gestión de Zonas</h2>
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+            
+            <div style="background: #1a1d2e; padding: 20px; border-radius: 8px; border: 1px solid #24293e; flex: 1; min-width: 300px;">
+                <form id="formNuevaLocalidad">
+                    <div class="grupo-campo">
+                        <input type="text" id="inputNombreLocalidad" placeholder="Ej. Pampa del Infierno" required>
+                    </div>
+                </form>
+                <h4 style="margin-top: 20px; color: #00adb5; font-size: 13px; border-bottom: 1px solid #24293e; padding-bottom: 5px;">📋 Localidades Registradas</h4>
+                <div id="listaAdminLocalidades" style="margin-top: 10px; max-height: 250px; overflow-y: auto;"></div>
+            </div>
+            <div style="background: #1a1d2e; padding: 20px; border-radius: 8px; border: 1px solid #24293e; flex: 1.4; min-width: 350px;">
+                <h3 style="color: #ff9f43; font-size: 18px;">🏡 Registrar Barrio y sus Calles</h3>
+                <form id="formNuevoBarrio">
+                    <div class="grupo-campo">
+                        <label>Seleccionar Localidad:</label>
+                        <select id="selectLocalidadPadre" required>
+                            <option value="">-- Cargando localidades... --</option>
+                        </select>
+                    </div>
+                    <div class="grupo-campo">
+                        <label>Nombre del Barrio:</label>
+                        <input type="text" id="inputNombreBarrio" placeholder="Ej. Barrio Centro" required>
+                    </div>
+                    <div class="grupo-campo">
+                        <label>Calles (Separadas por comas):</label>
+                        <textarea id="inputCallesBarrio" rows="3" placeholder="Ej. Av. Alvear, Calle Belgrano, Resistencia" required></textarea>
+                    </div>
+                    <button type="submit" class="btn-enviar" style="background: #ff9f43;">💾 Guardar Barrio y Calles</button>
+                </form>
+                <h4 id="tituloAdminBarrios" style="margin-top: 20px; color: #ff9f43; font-size: 13px; border-bottom: 1px solid #24293e; padding-bottom: 5px;">📋 Barrios de la Localidad</h4>
+                <div id="listaAdminBarrios" style="margin-top: 10px; max-height: 220px; overflow-y: auto;"></div>
+            </div>
+
+        </div>
+    </div>
+    <script src="conexion.js"></script>
+</body>
+</html>
